@@ -3,9 +3,7 @@ import Button from '../../UI/Button/Button.js'
 
 class OrderSummary extends Component {
     //This was converted to a class to test for component update. Can be converted back to function.
-    componentDidUpdate() {
-        console.log('[OrderSummary] DidUpdate')
-    }
+
     render () {
         const ingredientSummary = Object.keys(this.props.ingredients)
         .map(igKey => {

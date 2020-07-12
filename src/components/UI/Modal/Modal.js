@@ -12,9 +12,6 @@ class Modal extends Component{
             return false;
         }
     }
-    componentWillUpdate() {
-        console.log('[Modal] DidUpdate')
-    }
     render () {
         return (
             <>
@@ -32,3 +29,4 @@ class Modal extends Component{
 }
 
 export default Modal
+
