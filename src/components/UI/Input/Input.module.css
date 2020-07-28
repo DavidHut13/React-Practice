@@ -13,9 +13,9 @@
 
 .InputElement {
     outline: none;
-    border:1px solid rgb(20, 18, 18);
+    border:1px solid rgb(173, 173, 173);
     background-color: white;
-    border-radius:25px;
+    border-radius:10px;
     font:inherit;
     padding: 6px 10px;
     display:block;
@@ -25,7 +25,7 @@
 
 .InputElement:focus {
     outline:none;
-    background: #ccc;
+    background: rgb(238, 238, 238);
 }
 
 .Invalid {
