@@ -14,11 +14,27 @@ export const authSuccess = (token,userId) => {
     }
 }
 export const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expirationDate')
+    localStorage.removeItem('userId')
     return {
         type: actionTypes.AUTH_LOGOUT
     }
 }
-export const checAuthTimeout = (expirationTime) => {
+export const authCheckState = () => {
+    return dispatch => {
+        const token = localStorage.getItem('token');
+        const expirationDate = new Date(localStorage.getItem('expirationDate'))
+        if (!token || expirationDate <= new Date()) {
+            dispatch(logout())
+        } else {
+            const userId = localStorage.getItem('userId')
+            dispatch(authSuccess(token,userId))
+            dispatch(checkAuthTimeout((expirationDate.getTime() - new Date().getTime()) / 1000))
+        }
+    }
+}
+export const checkAuthTimeout = (expirationTime) => {
     return dispatch => {
         setTimeout(() => {
             dispatch(logout)
@@ -32,6 +48,12 @@ export const authFail = (error) => {
         error: error
     }
 }
+export const setAuthRedirectPath = (path) => {
+    return {
+        type: actionTypes.SET_AUTH_REDIRECT_PATH,
+        path:path
+    }
+}
 export const auth = (email, password, isSignup) => {
     return dispatch => {
         dispatch(authStart())
@@ -40,18 +62,20 @@ export const auth = (email, password, isSignup) => {
             password: password,
             returnSecureToken: true
         }
-        let url ="https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCNWazmmIZcoWhza-b2QfkPLZs6Y-a25XM"
+        let url ="https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=" + process.env.REACT_APP_API_KEY
         if (!isSignup){
-            url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCNWazmmIZcoWhza-b2QfkPLZs6Y-a25XM"
+            url = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + process.env.REACT_APP_API_KEY
         }
         axios.post(url, authData)
         .then(response => {
-            console.log(response);
+            const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000)
+            localStorage.setItem('token',response.data.idToken)
+            localStorage.setItem('expirationDate',expirationDate)
+            localStorage.setItem('userId', response.data.localId)
             dispatch(authSuccess(response.data.idToken,response.data.localId));
-            dispatch(checAuthTimeout(response.data.expiresIn))
+            dispatch(checkAuthTimeout(response.data.expiresIn))
         })
         .catch(error => {
-            console.log(error)
             dispatch(authFail(error.response.data.error))
         })
     }
