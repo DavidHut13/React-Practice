@@ -10,7 +10,7 @@ import * as actions from '../../store/actions/index.js'
 import axios from '../../axios-orders.js'
 
 
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
     state = {
         totalPrice: 4,
         purchasing: false,
